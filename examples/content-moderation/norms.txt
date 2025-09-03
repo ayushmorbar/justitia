@@ -1,0 +1,10 @@
+Content Moderation Policy
+
+Our platform prohibits:
+1. Hate speech targeting individuals or groups based on protected characteristics
+2. Harassment including personal attacks, threats, and bullying behavior  
+3. Explicit content including graphic violence and adult material
+4. Spam and misleading information
+
+Generate JSON rules with regex patterns to detect these violations.
+Include rationale for each rule and appropriate severity levels.

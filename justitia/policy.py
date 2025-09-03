@@ -47,55 +47,63 @@ class PolicyGenerator:
               - audit_notebook: Chain-of-thought reasoning text (str)
               - raw_response: Full raw model output (str)
         """
-        # Create structured prompt for policy generation
-        prompt_template = f"""You are JUSTITIA, an AI policy compiler for the "{self.domain}" domain.
+        # Enhanced developer message for better JSON output
+        enhanced_dev_message = f"""
+        You are a policy compiler. Generate a JSON policy specification from the given norms.
+        
+        Output format:
+        {{
+          "domain": "{self.domain}",
+          "version": "1.0",
+          "rules": [
+            {{
+              "id": "rule_1",
+              "description": "Clear description",
+              "pattern": "regex_pattern",
+              "severity": "low|medium|high|critical",
+              "rationale": "Why this rule exists"
+            }}
+          ],
+          "metadata": {{}}
+        }}
+        
+        Reasoning effort: {self.reasoning_effort}
+        {developer_message}
+        """
+        
+        # Create user prompt
+        user_prompt = f"""
+        Transform the following organizational norms into a structured JSON policy:
 
-Your task is to transform organizational norms into executable, auditable policies with transparent reasoning.
+        {norms_text}
 
-## Input Norms:
-{norms_text}
+        Requirements:
+        - Generate regex patterns that can detect violations
+        - Provide clear rationale for each rule
+        - Include appropriate severity levels
+        - Show your reasoning process in audit_notebook
 
-## Instructions:
-1. Analyze the norms carefully using chain-of-thought reasoning
-2. Generate a structured policy in JSON format
-3. Include clear decision criteria and examples
-4. Provide audit trail of your reasoning process
-5. Create test cases to validate the policy
+        **THINKING:**
+        [Detailed chain-of-thought analysis]
 
-## Output Format:
-Please structure your response as:
-
-**THINKING:**
-[Your detailed chain-of-thought analysis here]
-
-**POLICY:**
-```json
-{{
-  "domain": "{self.domain}",
-  "version": "1.0",
-  "rules": [
-    {{
-      "id": "rule_001",
-      "description": "Clear rule description",
-      "criteria": ["specific criteria"],
-      "examples": {{
-        "allowed": ["example 1", "example 2"],
-        "prohibited": ["example 1", "example 2"]
-      }},
-      "severity": "high|medium|low"
-    }}
-  ],
-  "exceptions": [
-    {{
-      "rule_id": "rule_001",
-      "condition": "exception condition",
-      "rationale": "why this exception exists"
-    }}
-  ]
-}}
-```
-
-Generate the policy now:"""
+        **POLICY:**
+        ```json
+        {{
+          "domain": "{self.domain}",
+          "version": "1.0",
+          "rules": [
+            {{
+              "id": "rule_001",
+              "description": "Rule description",
+              "pattern": "regex_pattern_for_detection",
+              "severity": "high|medium|low",
+              "rationale": "Explanation for this rule"
+            }}
+          ],
+          "metadata": {{}}
+        }}
+        ```
+        """
 
         try:
             # Send request to Ollama
@@ -104,11 +112,11 @@ Generate the policy now:"""
                 messages=[
                     {
                         "role": "system",
-                        "content": f"You are JUSTITIA, an AI policy compiler. Use {self.reasoning_effort} reasoning effort."
+                        "content": enhanced_dev_message
                     },
                     {
                         "role": "user", 
-                        "content": prompt_template
+                        "content": user_prompt
                     }
                 ],
                 options={

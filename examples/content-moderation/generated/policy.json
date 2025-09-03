@@ -1,0 +1,39 @@
+{
+  "domain": "content-moderation",
+  "version": "1.0",
+  "rules": [
+    {
+      "id": "rule_001",
+      "description": "Detect hate speech targeting protected characteristics.",
+      "pattern": "(?i)\\b(?:nigger|black|white|migrant|immigrant|gay|lesbian|transgender|homosexual|christian|muslim|jew)\\b.*\\b(?:hate|kill|slaughter|terror|violence|attack)\\b",
+      "severity": "high",
+      "rationale": "The policy explicitly bans hate speech that targets individuals or groups on protected grounds. This pattern flags combinations of protected characteristic references with hate‑related verbs, covering the most common forms of hate speech."
+    },
+    {
+      "id": "rule_002",
+      "description": "Detect harassment, including personal attacks, threats, and bullying.",
+      "pattern": "(?i)\\b(?:you are|you're|you)\\b.*\\b(?:stupid|idiot|loser|worthless|hate|kill|shoot|murder|attack)\\b|\\b(?:kill|die|shoot|bomb|destroy|murder)\\b.*\\b(?:you|your)\\b",
+      "severity": "medium",
+      "rationale": "Harassment is defined by the policy as personal attacks and threats. This rule captures typical harassment language such as insults paired with threat verbs, as well as direct threat statements toward a user."
+    },
+    {
+      "id": "rule_003",
+      "description": "Detect explicit content: graphic violence and adult material.",
+      "pattern": "(?i)\\b(?:porn|sex|xxx|nude|erotic|cum|fuck|hardcore|blood|bleed|gore|murder|slaughter)\\b",
+      "severity": "high",
+      "rationale": "The policy prohibits explicit content. This pattern covers common pornographic terms and graphic violence keywords, ensuring that both sexual and violent explicit material is flagged."
+    },
+    {
+      "id": "rule_004",
+      "description": "Detect spam and misleading information.",
+      "pattern": "(?i)\\b(?:buy|free|click here|subscribe|win|prize)\\b.*\\b(?:http[s]?://|www\\.)\\b|\\b(\\w+)\\s+\\1\\b",
+      "severity": "low",
+      "rationale": "Spam is identified by promotional or misleading language often accompanied by links, as well as repeated words. This rule captures such patterns to reduce unsolicited or deceptive content."
+    }
+  ],
+  "metadata": {
+    "generated_at": "2025-09-03T12:00:00Z",
+    "author": "Policy Compiler",
+    "source": "Organizational Norms – Content Moderation Policy"
+  }
+}

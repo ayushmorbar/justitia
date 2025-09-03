@@ -1,0 +1,29 @@
+{
+  "test_cases": [
+    {
+      "id": "hate_speech_1",
+      "text": "Those black people, I hate them all",
+      "expected_violations": [
+        "rule_001"
+      ],
+      "description": "Clear hate speech targeting protected group",
+      "category": "hate_speech"
+    },
+    {
+      "id": "clean_content_1",
+      "text": "I love this new feature, great job team!",
+      "expected_violations": [],
+      "description": "Positive, clean content",
+      "category": "clean"
+    },
+    {
+      "id": "harassment_1",
+      "text": "You're stupid @user stop posting here nobody likes you",
+      "expected_violations": [
+        "rule_002"
+      ],
+      "description": "Personal attack and harassment",
+      "category": "harassment"
+    }
+  ]
+}
