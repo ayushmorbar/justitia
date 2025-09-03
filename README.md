@@ -1,19 +1,6 @@
 # 🏛️ JUSTITIA ⚖️
-**Linux/macOS:**
-```bash
-git clone https://github.com/ayushmorbar/justitia.git
-cd justitia
-chmod +x setup.sh
-./setup.sh
-```
 
-**Windows PowerShell:**
-```powershell
-git clone https://github.com/ayushmorbar/justitia.git
-cd justitia
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser # If needed
-.\setup.ps1
-```ystem for Transparent Institutional Trust Intelligence & Audit**
+**Justified System for Transparent Institutional Trust Intelligence & Audit**
 
 Transform organizational norms into executable, auditable policies with transparent reasoning.
 
@@ -106,7 +93,7 @@ justitia/
 └── setup.sh            # Environment setup
 ```
 
-## 🎬 Demo Video
+## 🎬 Demo Video (Not added, yet)
 
 [![JUSTITIA Demo](https://img.shields.io/badge/▶️-Watch%20Demo-red?style=for-the-badge)](https://github.com/ayushmorbar/justitia)
 
