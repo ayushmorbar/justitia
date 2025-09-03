@@ -27,7 +27,7 @@ chmod +x setup.sh
 
 **Windows PowerShell:**
 ```powershell
-git clone https://github.com/ayushmorbar/justitia.git
+git clone https://github.com/YOUR-USERNAME/justitia.git
 cd justitia
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser # If needed
 .\setup.ps1
