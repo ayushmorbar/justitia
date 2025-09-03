@@ -1,0 +1,11 @@
+{
+  "test_cases": [
+    {
+      "id": "sample_1",
+      "text": "Sample text for testing",
+      "expected_violations": [],
+      "description": "Generic sample case",
+      "category": "general"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "domain": "demo-policy",
+  "version": "1.0",
+  "rules": [
+    {
+      "id": "rule_001",
+      "description": "Detect hard‑coded passwords in source code",
+      "pattern": "(?i)\\b(password|pwd|secret|apiKey)\\s*=\\s*['\"][^'\"]+['\"]",
+      "severity": "high",
+      "rationale": "Hard‑coded credentials can be extracted from the code base and lead to credential leakage. Detecting them early prevents accidental exposure."
+    },
+    {
+      "id": "rule_002",
+      "description": "Detect logging of personally identifiable information (PII)",
+      "pattern": "(?i)logger\\.(debug|info|warn|error)\\s*\\(.*\\b(email|ssn|phone|social\\s+security\\s+number)\\b.*\\)",
+      "severity": "high",
+      "rationale": "Logging PII violates privacy regulations (e.g., GDPR, CCPA) and can expose sensitive user data in logs that are often less protected."
+    },
+    {
+      "id": "rule_003",
+      "description": "Detect unencrypted JDBC database connections",
+      "pattern": "(?i)jdbc:[^;]+\\?useSSL=false|Connection\\.setUseSSL\\(false\\)",
+      "severity": "high",
+      "rationale": "Unencrypted database traffic can be intercepted, compromising data confidentiality. Enforcing SSL ensures data in transit is protected."
+    },
+    {
+      "id": "rule_004",
+      "description": "Detect usage of insecure random number generators",
+      "pattern": "(?i)\\bMath\\.random\\s*\\(\\s*\\)|\\bnew\\s+Random\\s*\\(",
+      "severity": "medium",
+      "rationale": "Standard RNGs are not cryptographically secure and can be predictable. Replacing them with `SecureRandom` mitigates timing and predictability attacks."
+    },
+    {
+      "id": "rule_005",
+      "description": "Detect usage of deprecated APIs",
+      "pattern": "(?i)\\bOldAPIClass\\b|\\boldMethod\\s*\\(",
+      "severity": "medium",
+      "rationale": "Deprecated APIs may be removed in future releases and can contain known vulnerabilities. Flagging them encourages timely migration."
+    }
+  ],
+  "metadata": {
+    "generated_by": "policy_compiler",
+    "generation_date": "2025-09-03"
+  }
+}
