@@ -56,14 +56,29 @@ class TestResult(BaseModel):
 class PolicyTestSuite:
     """Main test runner for policy validation"""
     
-    def __init__(self, policy_path: Path, cases_path: Path):
-        self.policy_path = policy_path
-        self.cases_path = cases_path
-        self.policy = self._load_policy()
-        self.test_cases = self._load_test_cases()
+    def __init__(self, policy_path: Path = None, cases_path: Path = None, policy_data: Dict[str, Any] = None, test_cases_data: Dict[str, Any] = None):
+        if policy_data is not None and test_cases_data is not None:
+            # Direct data mode for notebook/in-memory usage
+            self.policy = Policy(**policy_data)
+            # Handle both single dict and list formats
+            if isinstance(test_cases_data, dict):
+                cases_list = test_cases_data.get('test_cases', [test_cases_data])
+            else:
+                cases_list = test_cases_data
+            self.test_cases = [TestCase(**case) for case in cases_list]
+        elif policy_path is not None and cases_path is not None:
+            # File mode for CLI usage
+            self.policy_path = policy_path
+            self.cases_path = cases_path
+            self.policy = self._load_policy()
+            self.test_cases = self._load_test_cases()
+        else:
+            raise ValueError("Either provide file paths (policy_path, cases_path) or data (policy_data, test_cases_data)")
     
     def _load_policy(self) -> Policy:
         """Load and validate policy JSON"""
+        if not hasattr(self, 'policy_path') or self.policy_path is None:
+            raise ValueError("Policy path not set for file loading")
         try:
             with self.policy_path.open('r', encoding='utf-8') as f:
                 policy_data = json.load(f)
@@ -73,6 +88,8 @@ class PolicyTestSuite:
     
     def _load_test_cases(self) -> List[TestCase]:
         """Load and validate test cases JSON"""
+        if not hasattr(self, 'cases_path') or self.cases_path is None:
+            raise ValueError("Test cases path not set for file loading")
         try:
             with self.cases_path.open('r', encoding='utf-8') as f:
                 cases_data = json.load(f)
@@ -86,6 +103,39 @@ class PolicyTestSuite:
             return [TestCase(**case) for case in cases_list]
         except Exception as e:
             raise ValueError(f"Failed to load test cases from {self.cases_path}: {e}")
+    
+    def run_tests(self, policy_data: Dict[str, Any] = None, test_cases_data: Dict[str, Any] = None):
+        """
+        Run tests with provided data (for notebook usage).
+        If no data provided, uses loaded policy and test cases.
+        """
+        if policy_data is not None or test_cases_data is not None:
+            # Update policy and test cases with provided data
+            if policy_data is not None:
+                self.policy = Policy(**policy_data)
+            if test_cases_data is not None:
+                # Handle both single dict and list formats
+                if isinstance(test_cases_data, dict):
+                    cases_list = test_cases_data.get('test_cases', [test_cases_data])
+                else:
+                    cases_list = test_cases_data
+                self.test_cases = [TestCase(**case) for case in cases_list]
+        
+        # Run all tests and return results with summary
+        results = self.run_all_tests()
+        report = self.generate_report(results)
+        
+        # Create a simple object to hold results for backward compatibility
+        class TestResults:
+            def __init__(self, results, summary):
+                self.test_results = results
+                self.total_tests = summary['total_tests']
+                self.passed = summary['passed'] 
+                self.failed = summary['failed']
+                self.pass_rate = summary['pass_rate']
+                self.average_score = summary['average_score']
+        
+        return TestResults(results, report['summary'])
     
     def run_single_test(self, test_case: TestCase) -> TestResult:
         """Run a single test case against the policy"""
