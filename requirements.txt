@@ -1,0 +1,20 @@
+# Core dependencies
+typer[all]
+rich
+pydantic
+openai-harmony
+
+# Local inference
+ollama-python
+httpx
+
+# Storage
+sqlite-utils
+
+# Optional web UI
+fastapi
+uvicorn
+
+# Development
+pytest
+black
