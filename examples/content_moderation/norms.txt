@@ -1,0 +1,8 @@
+Our community policy forbids hate speech, harassment, and explicit content.
+
+Rules:
+1. Messages containing slurs or hate symbols are flagged.
+2. Harassment includes repeated personal attacks and threats.
+3. Explicit content (nudity, graphic violence) is disallowed.
+
+Please generate JSON rules reflecting these with exceptions and rationale.

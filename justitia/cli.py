@@ -7,8 +7,10 @@ Main entry point for the JUSTITIA policy compiler.
 import typer
 from rich.console import Console
 from rich.panel import Panel
+from rich import pretty
 from typing import Optional
 from pathlib import Path
+from justitia.policy import PolicyGenerator, save_policy_pack
 
 app = typer.Typer(
     name="justitia",
@@ -52,18 +54,71 @@ def generate(
 ):
     """Generate policy from norms"""
     console.print(Panel.fit(
-        f"🧠 Generating policy with {effort} reasoning effort",
+        f"🧠 Generating policy with reasoning effort: {effort}",
         style="bold blue"
     ))
     
     if not input_file.exists():
         console.print(f"❌ Input file not found: {input_file}", style="red")
         raise typer.Exit(1)
+
+    # Read norms content
+    with input_file.open("r", encoding="utf-8") as f:
+        norms_text = f.read()
+
+    # Determine domain and output path
+    domain = input_file.parent.name if input_file.parent.name != "." else "default-domain"
+    if output:
+        output_path = output
+        if output_path.is_file():
+            output_path = output_path.parent
+    else:
+        output_path = input_file.parent / "generated"
+
+    console.print(f"📂 Domain: {domain}")
+    console.print(f"📄 Input file: {input_file}")
+    console.print(f"💾 Output directory: {output_path}")
+
+    # Initialize policy generator
+    pg = PolicyGenerator(domain=domain, reasoning_effort=effort)
     
-    # TODO: This will be implemented in next steps
-    console.print("🚧 Policy generation coming in next step...")
-    console.print(f"📄 Input: {input_file}")
-    console.print(f"🎚️ Effort: {effort}")
+    console.print("⏳ Contacting gpt-oss model via Ollama...")
+    console.print("🤖 This may take 30-60 seconds for complex policies...")
+    
+    try:
+        result = pg.generate_policy(norms_text)
+        
+        policy_json = result["policy_json"]
+        audit_notebook = result["audit_notebook"]
+        raw_response = result["raw_response"]
+
+        console.print("[green]✅ Policy generated successfully!")
+        console.print(f"📄 Saving policy pack to: {output_path}")
+        
+        save_policy_pack(policy_json, audit_notebook, output_path)
+        
+        # Show previews
+        console.print("\n[bold cyan]� Policy JSON Preview:[/bold cyan]")
+        if policy_json:
+            pretty.pprint(policy_json, console=console, max_length=3, max_string=100)
+        else:
+            console.print("⚠️ JSON parsing failed; see audit notebook for details", style="yellow")
+
+        console.print("\n[bold cyan]📝 Audit Notebook Preview:[/bold cyan]")
+        audit_preview = audit_notebook[:300] + "..." if len(audit_notebook) > 300 else audit_notebook
+        console.print(audit_preview if audit_preview.strip() else "No reasoning captured")
+
+        console.print(f"\n[bold green]🎉 Policy generation complete!")
+        console.print(f"📁 Files saved:")
+        console.print(f"   • {output_path}/policy.json")
+        console.print(f"   • {output_path}/audit_notebook.md")
+        
+    except RuntimeError as e:
+        console.print(f"❌ Error generating policy: {e}", style="red")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"❌ Unexpected error: {e}", style="red")
+        raise typer.Exit(1)
 
 @app.command()
 def test(

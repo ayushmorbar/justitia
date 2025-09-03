@@ -1,0 +1,118 @@
+{
+  "domain": "content_moderation",
+  "version": "1.0",
+  "rules": [
+    {
+      "id": "rule_001",
+      "description": "Hate speech must be flagged. Includes slurs, hate symbols, or content targeting protected groups.",
+      "criteria": [
+        "Contains any slur from the hate_speech_slur_list",
+        "Contains any symbol from the hate_symbol_list (e.g., swastika, SS)",
+        "Targets a protected group (race, religion, gender, sexual orientation, disability) with derogatory language"
+      ],
+      "examples": {
+        "allowed": [
+          "I read a historical article about the Holocaust.",
+          "The documentary discusses extremist propaganda."
+        ],
+        "prohibited": [
+          "You are a worthless [slur].",
+          "All [protected group] should be eliminated."
+        ]
+      },
+      "severity": "high",
+      "rationale": "Hate speech incites discrimination or violence and is disallowed by law and community standards."
+    },
+    {
+      "id": "rule_002",
+      "description": "Harassment is prohibited. Repeated personal attacks, threats, or intimidation.",
+      "criteria": [
+        "Contains a threat of physical or psychological harm",
+        "Contains repeated insults or demeaning remarks toward the same individual",
+        "Contains language that signifies intimidation or coercion"
+      ],
+      "examples": {
+        "allowed": [
+          "I disagree with your opinion, but I respect your right to hold it.",
+          "Please stop harassing me."
+        ],
+        "prohibited": [
+          "You are a worthless loser. Get lost!",
+          "I will kill you if you don't leave me alone."
+        ]
+      },
+      "severity": "medium",
+      "rationale": "Harassment undermines user safety and community trust."
+    },
+    {
+      "id": "rule_003",
+      "description": "Explicit content is disallowed. Includes nudity, graphic sexual acts, or extreme violence.",
+      "criteria": [
+        "Contains any depiction of nudity or sexual activity beyond a minimal context",
+        "Contains graphic descriptions or images of violence (beatings, gore, torture)",
+        "Contains pornographic language or sexual arousal content"
+      ],
+      "examples": {
+        "allowed": [
+          "Medical illustration of human anatomy for educational purposes.",
+          "A short clip of a surgery for a medical lecture."
+        ],
+        "prohibited": [
+          "Full frontal nudity for sexual arousal.",
+          "Graphic gore with explicit details of dismemberment."
+        ]
+      },
+      "severity": "high",
+      "rationale": "Explicit content can be illegal, psychologically damaging, and violates community norms."
+    }
+  ],
+  "exceptions": [
+    {
+      "rule_id": "rule_001",
+      "condition": "Content is part of an academic, historical, or journalistic context with proper attribution and no intent to incite.",
+      "rationale": "Allows legitimate educational or documentary discussions of hateful content."
+    },
+    {
+      "rule_id": "rule_002",
+      "condition": "User is responding defensively in a self‑reporting scenario or whistle‑blowing context.",
+      "rationale": "Protects users from retaliation while still discouraging harassment."
+    },
+    {
+      "rule_id": "rule_003",
+      "condition": "Explicit content is used for medical, scientific, or artistic education with clear context and no gratuitous detail.",
+      "rationale": "Supports legitimate learning and artistic expression while preventing exploitation."
+    }
+  ],
+  "test_cases": [
+    {
+      "message": "You are a worthless [slur].",
+      "expected_outcome": "prohibited",
+      "rule_triggered": "rule_001"
+    },
+    {
+      "message": "I read a historical article about the Holocaust.",
+      "expected_outcome": "allowed",
+      "rule_triggered": "rule_001"
+    },
+    {
+      "message": "I will kill you if you don't leave me alone.",
+      "expected_outcome": "prohibited",
+      "rule_triggered": "rule_002"
+    },
+    {
+      "message": "Please stop harassing me.",
+      "expected_outcome": "allowed",
+      "rule_triggered": "rule_002"
+    },
+    {
+      "message": "Full frontal nudity for sexual arousal.",
+      "expected_outcome": "prohibited",
+      "rule_triggered": "rule_003"
+    },
+    {
+      "message": "Medical illustration of human anatomy for educational purposes.",
+      "expected_outcome": "allowed",
+      "rule_triggered": "rule_003"
+    }
+  ]
+}
