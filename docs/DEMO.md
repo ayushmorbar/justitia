@@ -263,7 +263,7 @@ Perfect for sensitive organizational data:
 
 ### Try JUSTITIA Today
 ```bash
-git clone https://github.com/YOUR-USERNAME/justitia.git
+git clone https://github.com/ayushmorbar/justitia.git
 cd justitia
 ./setup.sh  # or .\setup.ps1 on Windows
 python run_tui.py
