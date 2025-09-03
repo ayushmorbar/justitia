@@ -1,0 +1,35 @@
+{
+  "domain": "code-review",
+  "version": "1.0",
+  "rules": [
+    {
+      "id": "rule_001",
+      "description": "Detect hard‑coded secrets, API keys, passwords, or tokens in source code",
+      "pattern": "(?i)(?:secret|api[_-]?key|password|passwd|token|pwd)\\s*[:=]\\s*['\"][^'\\\"]{8,}['\"]",
+      "severity": "high",
+      "rationale": "Hard‑coded secrets can be extracted by attackers, leading to credential compromise."
+    },
+    {
+      "id": "rule_002",
+      "description": "Detect raw request parameters used without validation or sanitization",
+      "pattern": "request\\.getParameter\\([^)]*\\)\\s*([+]|\\.|format\\()|\\$\\_GET\\[[^\\]]*\\]\\s*([+]|\\.|format\\()",
+      "severity": "medium",
+      "rationale": "Unvalidated input can lead to injection attacks or XSS."
+    },
+    {
+      "id": "rule_003",
+      "description": "Detect usage of deprecated or inherently vulnerable functions",
+      "pattern": "\\b(strcpy|sprintf|gets|eval|exec|system|popen|shell_exec)\\b",
+      "severity": "high",
+      "rationale": "These functions are known to be insecure and should be avoided."
+    },
+    {
+      "id": "rule_004",
+      "description": "Detect non‑parameterised SQL queries built via string concatenation",
+      "pattern": "(?i)(SELECT|INSERT|UPDATE|DELETE)\\b[^;]*\\bFROM\\b[^;]*\\bWHERE\\b[^;]*\\s*(['\\\"][^'\\\"]+['\\\"])\\s*(?:\\+|\\.?\\s*|%|\\s+format\\()",
+      "severity": "high",
+      "rationale": "Non‑parameterised queries are a primary vector for SQL injection."
+    }
+  ],
+  "metadata": {}
+}

@@ -1,0 +1,29 @@
+{
+  "test_cases": [
+    {
+      "id": "hardcoded_secret_1",
+      "text": "API_KEY = 'sk-1234567890abcdef'",
+      "expected_violations": [
+        "rule_001"
+      ],
+      "description": "Hardcoded API key",
+      "category": "security"
+    },
+    {
+      "id": "clean_code_1",
+      "text": "def calculate_sum(a, b):\n    return a + b",
+      "expected_violations": [],
+      "description": "Clean, simple function",
+      "category": "clean"
+    },
+    {
+      "id": "sql_injection_1",
+      "text": "query = \"SELECT * FROM users WHERE id = '\" + user_id + \"'\"",
+      "expected_violations": [
+        "rule_004"
+      ],
+      "description": "SQL injection vulnerability",
+      "category": "security"
+    }
+  ]
+}

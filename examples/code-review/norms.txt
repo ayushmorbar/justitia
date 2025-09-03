@@ -1,0 +1,9 @@
+Code Review Policy
+
+Security requirements:
+1. No hardcoded secrets, API keys, or passwords in source code
+2. Proper input validation and sanitization required
+3. No use of deprecated or vulnerable functions
+4. All database queries must use parameterized statements
+
+Generate JSON rules to automatically detect these security issues.
