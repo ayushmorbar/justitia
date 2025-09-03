@@ -103,7 +103,7 @@ class JustitiaTUI(App):
                         Button("Clear ✨", id="clear_btn"),
                         classes="button-row"
                     ),
-                    Log(id="output_log", highlight=True, markup=True),
+                    Log(id="output_log", highlight=True),
                     classes="container"
                 )
             
