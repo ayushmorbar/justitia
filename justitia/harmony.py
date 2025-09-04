@@ -4,7 +4,7 @@ from openai_harmony import (
     Conversation,
     Role,
     load_harmony_encoding,
-    HarmonyEncodingName
+    HarmonyEncodingName,
 )
 from pathlib import Path
 from typing import List
@@ -46,17 +46,15 @@ def create_system_message(
         A Harmony SYSTEM Message
     """
     # Capitalize reasoning effort for Harmony format
-    effort_map = {
-        "low": "Low",
-        "medium": "Medium", 
-        "high": "High"
-    }
+    effort_map = {"low": "Low", "medium": "Medium", "high": "High"}
     capitalized_effort = effort_map.get(reasoning_effort.lower(), "Medium")
-    
-    system_content = SystemContent.new()\
-        .with_conversation_start_date(datetime.now().strftime("%Y-%m-%d"))\
-        .with_reasoning_effort(capitalized_effort)\
+
+    system_content = (
+        SystemContent.new()
+        .with_conversation_start_date(datetime.now().strftime("%Y-%m-%d"))
+        .with_reasoning_effort(capitalized_effort)
         .with_model_identity("gpt-oss")
+    )
 
     if use_browser:
         system_content = system_content.with_browser_tool()
@@ -111,7 +109,7 @@ def create_policy_generation_prompt(
     domain: str,
     norms_content: str,
     reasoning_effort: str = "medium",
-    use_python: bool = True
+    use_python: bool = True,
 ) -> List[int]:
     """
     Create a complete policy generation prompt and encode it for gpt-oss.
@@ -158,5 +156,5 @@ Generate the policy now:"""
     system_msg = create_system_message(domain, reasoning_effort, use_python=use_python)
     user_msg = create_user_message(prompt_template)
     conversation = create_conversation(system_msg, user_msg)
-    
+
     return encode_conversation(conversation)

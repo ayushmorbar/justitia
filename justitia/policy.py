@@ -2,7 +2,51 @@ import json
 import re
 from pathlib import Path
 from typing import Optional, Dict, Tuple
-import ollama
+
+# Try to import ollama, fallback to ollama_python with adapter
+try:
+    import ollama
+except ImportError:
+    # Fallback to ollama_python with adapter
+    from ollama_python.endpoints.generate import GenerateAPI
+
+    class OllamaAdapter:
+        """Adapter to make ollama_python compatible with ollama API"""
+
+        @staticmethod
+        def chat(model: str, messages: list, options: dict = None):
+            """Adapter method to provide ollama.chat() compatible interface"""
+            try:
+                # Extract model name from the model string if it includes :tag
+                model_name = model
+                api = GenerateAPI(model=model_name)
+
+                # Convert messages to the format expected by ollama_python
+                formatted_messages = []
+                for msg in messages:
+                    formatted_messages.append(
+                        {"role": msg["role"], "content": msg["content"]}
+                    )
+
+                # Call the generate_chat_completion method
+                result = api.generate_chat_completion(
+                    messages=formatted_messages, options=options or {}
+                )
+
+                # Convert response to ollama format
+                return {
+                    "message": {
+                        "content": result.message[0].content if result.message else ""
+                    }
+                }
+            except Exception as e:
+                raise RuntimeError(
+                    f"Failed to communicate with Ollama via ollama_python: {e}"
+                )
+
+    # Replace ollama module with our adapter
+    ollama = OllamaAdapter()
+
 from justitia.harmony import (
     create_system_message,
     create_user_message,
@@ -70,7 +114,7 @@ class PolicyGenerator:
         Reasoning effort: {self.reasoning_effort}
         {developer_message}
         """
-        
+
         # Create user prompt
         user_prompt = f"""
         Transform the following organizational norms into a structured JSON policy:
@@ -110,24 +154,18 @@ class PolicyGenerator:
             response = ollama.chat(
                 model=self.model_name,
                 messages=[
-                    {
-                        "role": "system",
-                        "content": enhanced_dev_message
-                    },
-                    {
-                        "role": "user", 
-                        "content": user_prompt
-                    }
+                    {"role": "system", "content": enhanced_dev_message},
+                    {"role": "user", "content": user_prompt},
                 ],
                 options={
                     "temperature": 0.7,
                     "top_p": 0.9,
                     "num_predict": max_tokens,
-                }
+                },
             )
-            
+
             full_output = response.get("message", {}).get("content", "")
-            
+
             # Extract JSON policy and chain-of-thought
             policy_json, audit_notebook = self._extract_policy_and_cot(full_output)
 
@@ -136,7 +174,7 @@ class PolicyGenerator:
                 "audit_notebook": audit_notebook,
                 "raw_response": full_output,
             }
-            
+
         except Exception as e:
             raise RuntimeError(f"Failed to query Ollama model '{self.model_name}': {e}")
 
@@ -152,9 +190,13 @@ class PolicyGenerator:
         """
         try:
             # Extract thinking/reasoning section
-            thinking_match = re.search(r"\*\*THINKING:\*\*(.*?)\*\*POLICY:\*\*", output_text, re.DOTALL | re.IGNORECASE)
+            thinking_match = re.search(
+                r"\*\*THINKING:\*\*(.*?)\*\*POLICY:\*\*",
+                output_text,
+                re.DOTALL | re.IGNORECASE,
+            )
             audit_text = thinking_match.group(1).strip() if thinking_match else ""
-            
+
             # Extract JSON block from text
             json_match = re.search(r"```json\s*(\{.*?\})\s*```", output_text, re.DOTALL)
             if json_match:
@@ -171,7 +213,7 @@ class PolicyGenerator:
                 else:
                     # If no JSON found, return empty policy with full text as audit
                     return {}, output_text
-                    
+
         except json.JSONDecodeError as e:
             # If JSON parsing fails, return empty policy with full text as audit
             return {}, f"JSON parsing failed: {e}\n\nFull response:\n{output_text}"
@@ -182,19 +224,19 @@ class PolicyGenerator:
 def save_policy_pack(policy: Dict, audit_text: str, output_dir: Path):
     """
     Save policy.json and audit_notebook.md to output directory.
-    
+
     Args:
         policy: Policy dictionary to save as JSON
         audit_text: Chain-of-thought reasoning to save as Markdown
         output_dir: Directory to save files in
     """
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Save policy JSON
     policy_path = output_dir / "policy.json"
     with policy_path.open("w", encoding="utf-8") as f:
         json.dump(policy, f, indent=2, ensure_ascii=False)
-    
+
     # Save audit notebook
     audit_path = output_dir / "audit_notebook.md"
     with audit_path.open("w", encoding="utf-8") as f:
