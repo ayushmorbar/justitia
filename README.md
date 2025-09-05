@@ -2,6 +2,8 @@
 
 **Justified System for Transparent Institutional Trust Intelligence & Audit**
 
+*Version 0.1.1 - September 6, 2025*
+
 Transform organizational norms into executable, auditable policies with transparent reasoning.
 
 ## 🎯 OpenAI Open Model Hackathon 2025
@@ -12,6 +14,8 @@ Built with gpt-oss models showcasing:
 - 🐍 **Python tool integration** for executable policy tests
 - 🔒 **Offline-first operation** for sensitive organizational data
 - ⚖️ **Apache 2.0 licensed** for enterprise adoption
+
+**✅ Latest Update (Sept 6, 2025)**: TUI interface fully functional with complete content visibility and professional styling. See [CHANGELOG.md](CHANGELOG.md) for details.
 
 ## 🚀 Quick Start
 
@@ -53,13 +57,20 @@ pip install -e .
 ## 🖥️ Usage Options
 
 ### Interactive Terminal UI (Recommended)
+
+![JUSTITIA Terminal UI](images/justitia-tui-screenshot.svg)
+
+*Beautiful terminal interface with real-time policy generation*
+
 ```bash
 python run_tui.py
 ```
 - Beautiful terminal interface
-- Real-time policy generation
+- Real-time policy generation  
 - Sample templates included
 - Visual feedback and progress
+- Professional dropdown controls and multi-line input
+- Live logging with formatted output
 
 ### Command Line Interface
 ```bash

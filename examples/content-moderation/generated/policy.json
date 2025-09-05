@@ -4,36 +4,32 @@
   "rules": [
     {
       "id": "rule_001",
-      "description": "Detect hate speech targeting protected characteristics.",
-      "pattern": "(?i)\\b(?:nigger|black|white|migrant|immigrant|gay|lesbian|transgender|homosexual|christian|muslim|jew)\\b.*\\b(?:hate|kill|slaughter|terror|violence|attack)\\b",
+      "description": "Detect hate speech targeting protected characteristics",
+      "pattern": "(?i)\\b(?:black|white|muslim|christian|hindu|jew|gay|lesbian|transgender|homosexual)\\b.*\\b(?:hate|kill|slaughter|terror)\\b",
       "severity": "high",
-      "rationale": "The policy explicitly bans hate speech that targets individuals or groups on protected grounds. This pattern flags combinations of protected characteristic references with hate‑related verbs, covering the most common forms of hate speech."
+      "rationale": "Hate speech incites discrimination and violence. This pattern captures common slurs combined with hateful intent."
     },
     {
       "id": "rule_002",
-      "description": "Detect harassment, including personal attacks, threats, and bullying.",
-      "pattern": "(?i)\\b(?:you are|you're|you)\\b.*\\b(?:stupid|idiot|loser|worthless|hate|kill|shoot|murder|attack)\\b|\\b(?:kill|die|shoot|bomb|destroy|murder)\\b.*\\b(?:you|your)\\b",
-      "severity": "medium",
-      "rationale": "Harassment is defined by the policy as personal attacks and threats. This rule captures typical harassment language such as insults paired with threat verbs, as well as direct threat statements toward a user."
+      "description": "Detect harassment, personal attacks, threats, and bullying behavior",
+      "pattern": "(?i)\\b(?:stupid|idiot|fucking|kill\\s+me|you\\s+are\\s+trash|you\\s+are\\s+a\\s+trash)\\b",
+      "severity": "high",
+      "rationale": "Harassment damages user well‑being and can lead to escalation. The pattern targets aggressive language and threats."
     },
     {
       "id": "rule_003",
-      "description": "Detect explicit content: graphic violence and adult material.",
-      "pattern": "(?i)\\b(?:porn|sex|xxx|nude|erotic|cum|fuck|hardcore|blood|bleed|gore|murder|slaughter)\\b",
+      "description": "Detect explicit content including graphic violence and adult material",
+      "pattern": "(?i)\\b(?:nude|porn|sex|xxx|rape|violence|blood|gore)\\b|https?://[^\\s]+\\.(?:mp4|avi|mov|mpg|jpg|png|gif)",
       "severity": "high",
-      "rationale": "The policy prohibits explicit content. This pattern covers common pornographic terms and graphic violence keywords, ensuring that both sexual and violent explicit material is flagged."
+      "rationale": "Explicit material is disallowed to protect users from harmful or illegal content. The regex covers both textual descriptors and explicit media URLs."
     },
     {
       "id": "rule_004",
-      "description": "Detect spam and misleading information.",
-      "pattern": "(?i)\\b(?:buy|free|click here|subscribe|win|prize)\\b.*\\b(?:http[s]?://|www\\.)\\b|\\b(\\w+)\\s+\\1\\b",
-      "severity": "low",
-      "rationale": "Spam is identified by promotional or misleading language often accompanied by links, as well as repeated words. This rule captures such patterns to reduce unsolicited or deceptive content."
+      "description": "Detect spam and misleading information",
+      "pattern": "(?i)(?:click\\s+here|free\\s+money|subscribe\\s+now|limited\\s+time|http[s]?://[^\\s]+){2,}",
+      "severity": "medium",
+      "rationale": "Spam and deceptive links degrade platform quality and can mislead users. The pattern flags repeated promotional phrases and multiple URLs."
     }
   ],
-  "metadata": {
-    "generated_at": "2025-09-03T12:00:00Z",
-    "author": "Policy Compiler",
-    "source": "Organizational Norms – Content Moderation Policy"
-  }
+  "metadata": {}
 }

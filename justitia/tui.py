@@ -10,7 +10,7 @@ from pathlib import Path
 from textual.app import App, ComposeResult
 from textual.widgets import (
     Header, Footer, Input, Button, Static, Log, 
-    Select, TabbedContent, TabPane, DataTable
+    Select, TabbedContent, TabPane, DataTable, TextArea
 )
 from textual.containers import Vertical, Horizontal, Container
 from textual.reactive import reactive
@@ -24,41 +24,37 @@ class JustitiaTUI(App):
     """JUSTITIA Terminal User Interface"""
     
     CSS = """
-    Screen {
-        align: center middle;
-    }
-    
-    .container {
-        width: 100%;
-        height: 100%;
+    TabPane {
         padding: 1;
     }
     
-    #norms_input {
-        height: 8;
-        width: 100%;
-        border: round $primary;
-    }
-    
-    #output_log {
-        height: 20;
-        width: 100%;
-        border: round $accent;
-        scrollbar-gutter: stable;
-    }
-    
     .controls {
-        height: auto;
-        width: 100%;
-        padding: 1 0;
+        height: 3;
+        margin-bottom: 1;
+    }
+    
+    #norms_input {
+        height: 10;
+        border: round $primary;
+        margin-bottom: 1;
     }
     
     .button-row {
         height: 3;
-        align: center middle;
+        margin-bottom: 1;
+    }
+    
+    #output_log {
+        height: 15;
+        border: round $accent;
     }
     
     Button {
+        margin: 0 1;
+    }
+    
+    Select {
+        width: 1fr;
         margin: 0 1;
     }
     """
@@ -73,45 +69,39 @@ class JustitiaTUI(App):
         """Create the UI layout"""
         yield Header(show_clock=True)
         
-        with TabbedContent(initial="generate"):
+        with TabbedContent():
             with TabPane("Generate Policy", id="generate"):
-                yield Container(
-                    Horizontal(
-                        Select(
-                            [
-                                ("Content Moderation", "content-moderation"),
-                                ("Code Review", "code-review"),
-                                ("General Policy", "general")
-                            ],
-                            value="content-moderation",
-                            id="domain_select"
-                        ),
-                        Select(
-                            [("Low", "low"), ("Medium", "medium"), ("High", "high")],
-                            value="medium", 
-                            id="effort_select"
-                        ),
-                        classes="controls"
+                yield Horizontal(
+                    Select(
+                        [
+                            ("Content Moderation", "content-moderation"),
+                            ("Code Review", "code-review"),
+                            ("General Policy", "general")
+                        ],
+                        value="content-moderation",
+                        id="domain_select"
                     ),
-                    Input(
-                        placeholder="Enter your policy norms here...\n\nExample:\nOur platform prohibits hate speech and harassment.\nRules:\n1. No personal attacks\n2. No discriminatory language\n3. No threats or intimidation",
-                        id="norms_input"
+                    Select(
+                        [("Low", "low"), ("Medium", "medium"), ("High", "high")],
+                        value="medium", 
+                        id="effort_select"
                     ),
-                    Horizontal(
-                        Button("Generate Policy 🧠", id="generate_btn", variant="primary"),
-                        Button("Load Sample 📝", id="load_sample_btn"),
-                        Button("Clear ✨", id="clear_btn"),
-                        classes="button-row"
-                    ),
-                    Log(id="output_log", highlight=True),
-                    classes="container"
+                    classes="controls"
                 )
+                yield TextArea(
+                    text="Enter your policy norms here...\n\nExample:\nOur platform prohibits hate speech and harassment.\nRules:\n1. No personal attacks\n2. No discriminatory language\n3. No threats or intimidation",
+                    id="norms_input"
+                )
+                yield Horizontal(
+                    Button("Generate Policy 🧠", id="generate_btn", variant="primary"),
+                    Button("Load Sample 📝", id="load_sample_btn"),
+                    Button("Clear ✨", id="clear_btn"),
+                    classes="button-row"
+                )
+                yield Log(id="output_log", highlight=True)
             
             with TabPane("Test Policy", id="test"):
-                yield Container(
-                    Static("Policy testing will be implemented here", id="test_content"),
-                    classes="container"
-                )
+                yield Static("🧪 Policy Testing Interface\n\nThis tab will contain:\n• Policy validation tools\n• Test case creation\n• Results analysis\n\nComing soon!", id="test_content")
         
         yield Footer()
     
@@ -126,11 +116,11 @@ class JustitiaTUI(App):
     def on_select_changed(self, event: Select.Changed) -> None:
         """Handle dropdown changes"""
         if event.select.id == "domain_select":
-            self.current_domain = event.value
+            self.current_domain = str(event.value)
             log = self.query_one("#output_log", Log)
             log.write_line(f"📂 Domain changed to: {event.value}")
         elif event.select.id == "effort_select":
-            self.current_effort = event.value
+            self.current_effort = str(event.value)
             log = self.query_one("#output_log", Log)
             log.write_line(f"⚙️ Reasoning effort set to: {event.value}")
     
@@ -147,10 +137,10 @@ class JustitiaTUI(App):
     
     async def generate_policy(self) -> None:
         """Generate policy from input norms"""
-        norms_input = self.query_one("#norms_input", Input)
+        norms_input = self.query_one("#norms_input", TextArea)
         output_log = self.query_one("#output_log", Log)
         
-        norms_text = norms_input.value.strip()
+        norms_text = norms_input.text.strip()
         if not norms_text:
             output_log.write_line("[red]❌ Please enter policy norms before generating.[/red]")
             return
@@ -208,7 +198,7 @@ class JustitiaTUI(App):
     
     def load_sample_norms(self) -> None:
         """Load sample norms for the current domain"""
-        norms_input = self.query_one("#norms_input", Input)
+        norms_input = self.query_one("#norms_input", TextArea)
         output_log = self.query_one("#output_log", Log)
         
         samples = {
@@ -245,15 +235,15 @@ Create structured, testable policy rules with clear rationale."""
         }
         
         sample_text = samples.get(self.current_domain, samples["general"])
-        norms_input.value = sample_text
+        norms_input.text = sample_text
         output_log.write_line(f"[green]📝 Loaded sample norms for {self.current_domain}[/green]")
     
     def clear_interface(self) -> None:
         """Clear input and output"""
-        norms_input = self.query_one("#norms_input", Input)
+        norms_input = self.query_one("#norms_input", TextArea)
         output_log = self.query_one("#output_log", Log)
         
-        norms_input.value = ""
+        norms_input.text = ""
         output_log.clear()
         output_log.write_line("🏛️ Interface cleared. Ready for new policy generation!")
 

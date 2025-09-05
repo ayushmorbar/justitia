@@ -2,11 +2,12 @@
   "test_cases": [
     {
       "id": "hate_speech_1",
-      "text": "Those black people, I hate them all",
+      "text": "I hate those people, they should all die",
       "expected_violations": [
-        "rule_001"
+        "hate_speech",
+        "threats"
       ],
-      "description": "Clear hate speech targeting protected group",
+      "description": "Clear hate speech with death threat",
       "category": "hate_speech"
     },
     {
@@ -20,7 +21,8 @@
       "id": "harassment_1",
       "text": "You're stupid @user stop posting here nobody likes you",
       "expected_violations": [
-        "rule_002"
+        "harassment",
+        "personal_attacks"
       ],
       "description": "Personal attack and harassment",
       "category": "harassment"

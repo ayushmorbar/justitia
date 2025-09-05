@@ -5,6 +5,53 @@ All notable changes to JUSTITIA (Justified System for Transparent Institutional 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2025-09-06
+
+### 🎉 TUI Interface Completion & Final Polish
+
+**Complete functionality achievement for OpenAI Open Model Hackathon 2025 submission**
+
+### Fixed
+- **🖥️ Terminal User Interface (TUI)**
+  - Resolved TextArea widget rendering issues for multi-line policy input
+  - Fixed CSS layout problems causing empty tab content display
+  - Improved widget hierarchy using proper Textual context managers
+  - Added explicit height allocations for proper content visibility
+  - Enhanced responsive design for various terminal sizes
+
+- **🎨 Interface Improvements**
+  - Streamlined layout structure for better content organization
+  - Optimized button positioning and spacing
+  - Improved dropdown select widget styling and functionality
+  - Enhanced log output formatting with better visual hierarchy
+  - Added professional borders and consistent theming
+
+### Enhanced
+- **⚡ User Experience**
+  - TUI now displays all content properly on startup
+  - Smoother navigation between Generate Policy and Test Policy tabs
+  - Better visual feedback for interactive elements
+  - Improved welcome messages and status indicators
+  - Professional interface ready for live demonstrations
+
+### Technical Improvements
+- **🔧 Code Quality**
+  - Fixed type casting issues in select event handlers
+  - Improved error handling for widget queries
+  - Better separation of layout concerns
+  - Enhanced CSS specificity for reliable styling
+  - Streamlined compose method for maintainability
+
+### Validation
+- ✅ Complete CLI functionality (all 5 commands working)
+- ✅ Fully functional TUI with visible content and controls
+- ✅ AI policy generation with gpt-oss integration verified
+- ✅ Comprehensive testing framework operational
+- ✅ Documentation and setup scripts validated
+- ✅ Cross-platform compatibility confirmed
+
+---
+
 ## [0.1.0] - 2025-09-03
 
 ### 🎯 OpenAI Open Model Hackathon 2025 Initial Release
